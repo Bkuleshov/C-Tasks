@@ -158,10 +158,7 @@ Deque<T>& Deque<T>::operator=(const Deque<T>& deque) {
 }
 
 template<typename T>
-Deque<T>::Deque(const size_t size) {
-  first_index_ = 0;
-  number_of_blocks_ = size / block_size_ + 1;
-  size_ = 0;
+Deque<T>::Deque(const size_t size): first_index_(0), number_of_blocks_(size / block_size_ + 1), size_(0) {
   set();
   for (size_t i = 0; i < size; ++i) {
     try {
@@ -174,10 +171,7 @@ Deque<T>::Deque(const size_t size) {
 }
 
 template<typename T>
-Deque<T>::Deque(const size_t size, const T& value) {
-  first_index_ = 0;
-  number_of_blocks_ = size / block_size_ + 1;
-  size_ = 0;
+Deque<T>::Deque(const size_t size, const T& value): first_index_(0), number_of_blocks_(size / block_size_ + 1), size_(0) {
   set();
   for (size_t i = 0; i < size; ++i) {
     try {
@@ -214,7 +208,7 @@ const T& Deque<T>::operator[](const size_t index) const {
 template<typename T>
 T& Deque<T>::at(const size_t index) {
   if (index >= size_) {
-    throw(std::out_of_range("out_of_range"));
+    throw(std::out_of_range("Requested index out of range"));
   }
   return data_[(first_index_ + index) / block_size_][(first_index_ + index) % block_size_];
 }
@@ -222,7 +216,7 @@ T& Deque<T>::at(const size_t index) {
 template<typename T>
 const T& Deque<T>::at(const size_t index) const {
   if (index >= size_) {
-    throw(std::out_of_range("out_of_range"));
+    throw(std::out_of_range("Requested index out of range"));
   }
   return data_[(first_index_ + index) / block_size_][(first_index_ + index) % block_size_];;
 }
@@ -238,6 +232,7 @@ void Deque<T>::push_back(const T& value) {
     new(data_[(first_index_ + size_) / block_size_] + (first_index_ + size_) % block_size_) T(value);
     ++size_;
   } catch(...) {
+    (data_[(first_index_ + size_) / block_size_] + (first_index_ + size_) % block_size_)->~T();
     throw;
   }
 }
@@ -252,6 +247,7 @@ void Deque<T>::push_front(const T& value) {
     new(data_[first_index_ / block_size_] + first_index_ % block_size_) T(value);
     ++size_;
   } catch(...) {
+    (data_[(first_index_ + size_) / block_size_] + (first_index_ + size_) % block_size_)->~T();
     throw;
   }
 }
