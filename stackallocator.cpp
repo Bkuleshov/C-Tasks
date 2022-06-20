@@ -31,16 +31,14 @@ class StackAllocator {
   using const_pointer = const T*;
   using const_reference = const T&;
 
-  template <typename U> 
+  template <typename U>
   struct rebind {
     using other = StackAllocator<U, N>;
   };
 
   StackAllocator() = default;
 
-  StackAllocator(const StackAllocator<T, N>& alloc) {
-    storage_ = alloc.get_storage();
-  }
+  StackAllocator(const StackAllocator<T, N>& alloc): storage_(alloc.get_storage()) {}
 
   StackAllocator& operator=(const StackAllocator<T, N>& alloc) {
     storage_ = alloc.get_storage();
@@ -146,7 +144,7 @@ class List {
   List& operator=(const List& other) {
     if (alloc_traits::propagate_on_container_copy_assignment::value) {
       allocator_ = other.allocator_;
-    } 
+    }
     List copy(allocator_);
     for (auto i = other.begin(); i != other.end(); ++i) {
       copy.push_back(*i);
@@ -332,4 +330,3 @@ class List {
     BaseNode* node_;
   };
 };
-
